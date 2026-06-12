@@ -32,3 +32,7 @@ Then open `http://localhost:4173`.
 ## Deploy
 
 The project is static and can be published directly to GitHub Pages.
+
+## GitHub Pages
+
+The repository includes a GitHub Actions workflow that deploys the root folder to GitHub Pages on every push to `main`.
