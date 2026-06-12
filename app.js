@@ -115,8 +115,18 @@ function bindEvents() {
 }
 
 async function loadQuestions() {
-  const response = await fetch("./data/questions.json");
-  return response.json();
+  try {
+    const response = await fetch("./data/questions.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Failed to load questions:", error);
+    return [];
+  }
 }
 
 function handleStartGame(event) {
@@ -136,6 +146,11 @@ function handleStartGame(event) {
   const modeId = formData.get("mode");
   const mode = MODES[modeId];
   const questions = buildQuestionSet(mode, appState.questionBank);
+
+  if (questions.length !== mode.foundation.length + mode.randomCount + mode.final.length) {
+    window.alert("Не удалось загрузить полную колоду вопросов. Обновите страницу и начните партию заново.");
+    return;
+  }
 
   appState.session = {
     id: crypto.randomUUID(),
