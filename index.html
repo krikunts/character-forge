@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#a54b36">
+  <meta name="description" content="Character Forge — офлайн PWA-игра для совместного создания вымышленного персонажа из 20 вопросов.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>Character Forge</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Collaborative Character Builder</p>
+        <h1>Character Forge</h1>
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">
+        <span class="theme-toggle__label">Theme</span>
+        <span id="themeToggleValue">Dark</span>
+      </button>
+    </header>
+
+    <main id="app" class="layout">
+      <section class="panel panel--hero" id="setupScreen">
+        <div class="panel__header">
+          <p class="eyebrow">New Session</p>
+          <h2>Соберите героя за короткую партию из тщательно отобранных вопросов</h2>
+          <p class="lede">
+            20 вопросов, ход по кругу, живое досье и финальная карточка персонажа без генеративных API.
+          </p>
+        </div>
+
+        <form id="setupForm" class="setup-form">
+          <label class="field">
+            <span>Игроки</span>
+            <textarea id="playersInput" rows="4" placeholder="Татьяна&#10;Аня&#10;Марина" required></textarea>
+            <small>Каждый игрок с новой строки. Минимум 1 игрок.</small>
+          </label>
+
+          <fieldset class="mode-picker">
+            <legend>Режим партии</legend>
+            <label class="mode-card">
+              <input type="radio" name="mode" value="standard" checked>
+              <span>Стандарт</span>
+              <small>7 основа, 10 случайных, 3 финала</small>
+            </label>
+            <label class="mode-card">
+              <input type="radio" name="mode" value="quick">
+              <span>Быстрая</span>
+              <small>5 основа, 5 случайных, имя и надгробие</small>
+            </label>
+            <label class="mode-card">
+              <input type="radio" name="mode" value="extended">
+              <span>Большая</span>
+              <small>7 основа, 20 случайных, 3 финала</small>
+            </label>
+          </fieldset>
+
+          <div class="setup-actions">
+            <button class="button button--primary" type="submit">Начать партию</button>
+            <button class="button" id="restoreButton" type="button" hidden>Продолжить сохранённую</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="game-view" id="gameScreen" hidden>
+        <article class="panel panel--card">
+          <div class="progress-block">
+            <p class="eyebrow" id="questionCounter">Вопрос 1 из 20</p>
+            <div class="progress-bar" aria-hidden="true">
+              <span id="progressFill"></span>
+            </div>
+          </div>
+
+          <div class="turn-chip" id="playerTurn">Отвечает: Татьяна</div>
+
+          <div class="question-card">
+            <p class="question-card__category" id="questionCategory">Основа</p>
+            <h2 id="questionTitle">Происхождение / раса</h2>
+            <p class="question-card__hint" id="questionHint">Ответ формирует досье персонажа и биографию.</p>
+          </div>
+
+          <form id="answerForm" class="answer-form">
+            <label class="field">
+              <span>Ответ</span>
+              <textarea id="answerInput" rows="4" placeholder="Например: гном из прибрежного города..." required></textarea>
+            </label>
+
+            <div class="answer-actions">
+              <button class="button button--primary" type="submit">Сохранить</button>
+              <button class="button" id="skipButton" type="button">Пропустить</button>
+            </div>
+          </form>
+        </article>
+
+        <aside class="panel panel--dossier">
+          <div class="panel__header panel__header--tight">
+            <p class="eyebrow">Live Dossier</p>
+            <h2>Досье персонажа</h2>
+          </div>
+
+          <dl class="dossier-list" id="dossierList"></dl>
+
+          <div class="panel__header panel__header--tight">
+            <p class="eyebrow">Session Tools</p>
+            <h3>Действия</h3>
+          </div>
+
+          <div class="tool-grid">
+            <button class="button" id="saveSnapshotButton" type="button">Сохранить прогресс</button>
+            <button class="button" id="restartButton" type="button">Новая партия</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="panel panel--result" id="resultScreen" hidden>
+        <div class="result-head">
+          <div>
+            <p class="eyebrow">Final Character</p>
+            <h2 id="resultName">Безымянный герой</h2>
+          </div>
+          <div class="result-badges">
+            <span class="badge" id="resultMode">Стандарт</span>
+            <span class="badge" id="resultPlayers">1 игрок</span>
+          </div>
+        </div>
+
+        <div class="result-grid">
+          <article class="result-card">
+            <h3>Карточка персонажа</h3>
+            <div id="resultCard" class="result-card__body"></div>
+          </article>
+
+          <article class="result-card">
+            <h3>Краткая биография</h3>
+            <p id="resultBio" class="result-bio"></p>
+          </article>
+
+          <article class="result-card result-card--full">
+            <h3>Полное досье</h3>
+            <div id="resultDossier" class="result-dossier"></div>
+          </article>
+        </div>
+
+        <div class="export-bar">
+          <button class="button button--primary" data-export-format="txt" type="button">Экспорт TXT</button>
+          <button class="button button--primary" data-export-format="md" type="button">Экспорт Markdown</button>
+          <button class="button button--primary" data-export-format="json" type="button">Экспорт JSON</button>
+          <button class="button" id="playAgainButton" type="button">Сыграть ещё раз</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <template id="dossierItemTemplate">
+    <div class="dossier-item">
+      <dt></dt>
+      <dd></dd>
+    </div>
+  </template>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
