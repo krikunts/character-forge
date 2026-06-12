@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#a54b36">
+  <meta name="theme-color" content="#111111">
   <meta name="description" content="Character Forge — офлайн PWA-игра для совместного создания вымышленного персонажа из 20 вопросов.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
@@ -14,11 +14,10 @@
   <div class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Collaborative Character Builder</p>
         <h1>Character Forge</h1>
       </div>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">
-        <span class="theme-toggle__label">Theme</span>
+        <span class="theme-toggle__label">Тема</span>
         <span id="themeToggleValue">Dark</span>
       </button>
     </header>
@@ -26,18 +25,14 @@
     <main id="app" class="layout">
       <section class="panel panel--hero" id="setupScreen">
         <div class="panel__header">
-          <p class="eyebrow">New Session</p>
-          <h2>Соберите героя за короткую партию из тщательно отобранных вопросов</h2>
-          <p class="lede">
-            20 вопросов, ход по кругу, живое досье и финальная карточка персонажа без генеративных API.
-          </p>
+          <h2>20 вопросов. Один персонаж.</h2>
         </div>
 
         <form id="setupForm" class="setup-form">
           <label class="field">
             <span>Игроки</span>
             <textarea id="playersInput" rows="4" placeholder="Татьяна&#10;Аня&#10;Марина" required></textarea>
-            <small>Каждый игрок с новой строки. Минимум 1 игрок.</small>
+            <small>По одному имени на строку.</small>
           </label>
 
           <fieldset class="mode-picker">
@@ -45,23 +40,23 @@
             <label class="mode-card">
               <input type="radio" name="mode" value="standard" checked>
               <span>Стандарт</span>
-              <small>7 основа, 10 случайных, 3 финала</small>
+              <small>20 вопросов</small>
             </label>
             <label class="mode-card">
               <input type="radio" name="mode" value="quick">
               <span>Быстрая</span>
-              <small>5 основа, 5 случайных, имя и надгробие</small>
+              <small>12 вопросов</small>
             </label>
             <label class="mode-card">
               <input type="radio" name="mode" value="extended">
               <span>Большая</span>
-              <small>7 основа, 20 случайных, 3 финала</small>
+              <small>30 вопросов</small>
             </label>
           </fieldset>
 
           <div class="setup-actions">
-            <button class="button button--primary" type="submit">Начать партию</button>
-            <button class="button" id="restoreButton" type="button" hidden>Продолжить сохранённую</button>
+            <button class="button button--primary" type="submit">Начать</button>
+            <button class="button" id="restoreButton" type="button" hidden>Продолжить</button>
           </div>
         </form>
       </section>
@@ -80,13 +75,12 @@
           <div class="question-card">
             <p class="question-card__category" id="questionCategory">Основа</p>
             <h2 id="questionTitle">Происхождение / раса</h2>
-            <p class="question-card__hint" id="questionHint">Ответ формирует досье персонажа и биографию.</p>
+            <p class="question-card__hint" id="questionHint" hidden></p>
           </div>
 
           <form id="answerForm" class="answer-form">
             <label class="field">
-              <span>Ответ</span>
-              <textarea id="answerInput" rows="4" placeholder="Например: гном из прибрежного города..." required></textarea>
+              <textarea id="answerInput" rows="4" placeholder="Ответ" required></textarea>
             </label>
 
             <div class="answer-actions">
@@ -98,14 +92,12 @@
 
         <aside class="panel panel--dossier">
           <div class="panel__header panel__header--tight">
-            <p class="eyebrow">Live Dossier</p>
-            <h2>Досье персонажа</h2>
+            <h2>Досье</h2>
           </div>
 
           <dl class="dossier-list" id="dossierList"></dl>
 
           <div class="panel__header panel__header--tight">
-            <p class="eyebrow">Session Tools</p>
             <h3>Действия</h3>
           </div>
 
@@ -119,7 +111,6 @@
       <section class="panel panel--result" id="resultScreen" hidden>
         <div class="result-head">
           <div>
-            <p class="eyebrow">Final Character</p>
             <h2 id="resultName">Безымянный герой</h2>
           </div>
           <div class="result-badges">

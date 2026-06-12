@@ -2,14 +2,14 @@ const STORAGE_KEY = "character-forge-session-v1";
 const THEME_KEY = "character-forge-theme";
 
 const CATEGORY_META = {
-  foundation: { label: "Основа", hint: "Этот ответ фиксирует базовый образ героя." },
-  final: { label: "Финал", hint: "Финальный штрих для карточки персонажа." },
-  past: { label: "Прошлое", hint: "Факт из прошлого, который добавляет вес персонажу." },
-  relationships: { label: "Отношения", hint: "Связи героя показывают его место среди других." },
-  habits: { label: "Привычки и вкусы", hint: "Бытовые детали делают героя живым." },
-  quirks: { label: "Странности", hint: "Небольшая странность почти всегда делает героя запоминающимся." },
-  world: { label: "Мир вокруг", hint: "Ответ добавляет среду, предметы и атмосферу." },
-  rumors: { label: "Слухи и легенды", hint: "То, что говорят другие, строит репутацию персонажа." }
+  foundation: { label: "Основа", hint: "" },
+  final: { label: "Финал", hint: "" },
+  past: { label: "Прошлое", hint: "" },
+  relationships: { label: "Отношения", hint: "" },
+  habits: { label: "Привычки", hint: "" },
+  quirks: { label: "Странности", hint: "" },
+  world: { label: "Мир", hint: "" },
+  rumors: { label: "Слухи", hint: "" }
 };
 
 const MODES = {
@@ -288,6 +288,7 @@ function renderGame() {
   nodes.questionCategory.textContent = meta.label;
   nodes.questionTitle.textContent = question.question;
   nodes.questionHint.textContent = meta.hint;
+  nodes.questionHint.hidden = !meta.hint;
   renderDossier(nodes.dossierList, buildDossierEntries(session.answers));
   nodes.answerInput.focus();
 }
